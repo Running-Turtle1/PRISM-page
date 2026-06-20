@@ -1,0 +1,378 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>PRISM | Fabric Image Demoireing Benchmark</title>
+    <meta
+      name="description"
+      content="Project page for Fabric Image Demoireing Benchmark from Synthesis to Restoration, introducing PRISM and FaDeNet for fabric image demoireing."
+    >
+    <meta property="og:title" content="PRISM | Fabric Image Demoireing Benchmark">
+    <meta
+      property="og:description"
+      content="A motivation-first project page for PRISM, a physics-based benchmark for fabric image demoireing."
+    >
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="assets/figures/motivation.webp">
+    <link rel="stylesheet" href="assets/site.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="#top" aria-label="PRISM home">
+        <span class="brand-mark"></span>
+        <span>PRISM</span>
+      </a>
+      <nav class="site-nav" aria-label="Main navigation">
+        <a href="#motivation">Motivation</a>
+        <a href="#benchmark">Benchmark</a>
+        <a href="#method">Method</a>
+        <a href="#results">Results</a>
+        <a href="#citation">Citation</a>
+      </nav>
+    </header>
+
+    <main id="top">
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-backdrop" aria-hidden="true"></div>
+        <div class="hero-inner">
+          <p class="eyebrow">ECCV 2026 Project Page</p>
+          <h1 id="hero-title">Fabric Image Demoir&eacute;ing Benchmark from Synthesis to Restoration</h1>
+          <p class="hero-copy">
+            PRISM reframes fabric demoir&eacute;ing from its motivation: fabric moir&eacute; is not a screen
+            artifact pasted over content, but sampling aliasing entangled with dense, deformable textile texture.
+          </p>
+          <p class="authors">
+            Pengchao Wei · Xiaojie Guo<br>
+            Tianjin University
+          </p>
+          <div class="action-row" aria-label="Project links">
+            <a class="action primary" href="Fabric_Image_Demoireing_Benchmark_from_Synthesis_to_Restoration.pdf">Paper PDF</a>
+            <a class="action" href="https://github.com/Running-Turtle1/PRISM-page">GitHub</a>
+            <span class="action muted" aria-disabled="true">Dataset soon</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="metric-strip" aria-label="Key project numbers">
+        <div>
+          <strong>16,050</strong>
+          <span>paired multi-resolution samples</span>
+        </div>
+        <div>
+          <strong>1,963</strong>
+          <span>clean fabric GT images</span>
+        </div>
+        <div>
+          <strong>32.159</strong>
+          <span>PSNR on PRISM</span>
+        </div>
+        <div>
+          <strong>3.39</strong>
+          <span>MOS on real fabric captures</span>
+        </div>
+      </section>
+
+      <section id="motivation" class="section">
+        <div class="section-kicker">Motivation</div>
+        <div class="section-heading">
+          <h2>Why fabric moir&eacute; needs its own benchmark</h2>
+          <p>
+            Existing screen-camera demoir&eacute;ing work assumes a more regular sampling source and a cleaner
+            separation between artifact and scene content. The paper argues that fabrics break both assumptions.
+          </p>
+        </div>
+
+        <div class="motivation-grid">
+          <article class="insight-card">
+            <span class="card-index">01</span>
+            <h3>The source is different</h3>
+            <p>
+              Screen moir&eacute; comes from rigid display lattices. Fabric moir&eacute; comes from non-rigid garments
+              with dense, anisotropic, semi-periodic weave structures, folds, and pose changes.
+            </p>
+          </article>
+          <article class="insight-card">
+            <span class="card-index">02</span>
+            <h3>The artifact is coupled</h3>
+            <p>
+              In fabrics, aliasing overlaps the genuine textile spectrum. Removing interference without deleting
+              authentic stripes, grids, and herringbone details becomes substantially more ill-posed.
+            </p>
+          </article>
+          <article class="insight-card">
+            <span class="card-index">03</span>
+            <h3>The data pipeline breaks</h3>
+            <p>
+              Supervised demoir&eacute;ing needs pixel-aligned pairs, but real garments deform. Global homography-style
+              registration is not enough for large-scale fabric data collection.
+            </p>
+          </article>
+        </div>
+
+        <figure class="wide-figure">
+          <img
+            src="assets/figures/motivation.webp"
+            alt="Cause-to-appearance domain gap between screen moire and fabric moire."
+            width="2796"
+            height="1594"
+          >
+          <figcaption>
+            The core motivation: screen and fabric moir&eacute; differ at the sampling source, spatial appearance,
+            and transfer behavior of screen-trained demoir&eacute;ing models.
+          </figcaption>
+        </figure>
+      </section>
+
+      <section id="benchmark" class="section band">
+        <div class="section-kicker">PRISM Benchmark</div>
+        <div class="section-heading two-column">
+          <h2>Physics-based residual injection for aligned supervision</h2>
+          <p>
+            PRISM avoids the impossible part of real fabric capture: obtaining a perfectly aligned clean garment
+            target after non-rigid deformation. It simulates the imaging chain, extracts a moir&eacute; residual through
+            a round-trip construction, and injects that residual back into the original clean grid.
+          </p>
+        </div>
+
+        <div class="process-list" aria-label="PRISM synthesis process">
+          <div>
+            <b>1. Viewpoint and sampling</b>
+            <span>Warp, downsample, apply CFA mosaicking, noise, and demosaicking to induce realistic aliasing.</span>
+          </div>
+          <div>
+            <b>2. Round-trip residual</b>
+            <span>Compare aliased and anti-aliased branches under matched geometry to isolate moir&eacute; components.</span>
+          </div>
+          <div>
+            <b>3. Residual injection</b>
+            <span>Add the residual to the clean image so texture remains pixel-aligned and supervision stays stable.</span>
+          </div>
+        </div>
+
+        <figure class="wide-figure">
+          <img
+            src="assets/figures/syn_pipeline_crop.webp"
+            alt="PRISM synthesis pipeline with viewpoint simulation, ISP simulation, residual extraction, and inverse warp."
+            width="3071"
+            height="1504"
+          >
+          <figcaption>
+            PRISM builds fabric moir&eacute; pairs by modeling capture geometry, sensor sampling, CFA/ISP effects,
+            and residual injection.
+          </figcaption>
+        </figure>
+
+        <div class="dataset-layout">
+          <div>
+            <h3>Dataset construction</h3>
+            <p>
+              The clean pool starts from web-collected garment images with high-frequency textile patterns, followed
+              by duplicate removal, quality filtering, garment localization, text removal, semantic filtering, and
+              expert inspection. The final release contains 14,587 training pairs and 1,463 testing pairs.
+            </p>
+            <dl class="fact-list">
+              <div>
+                <dt>Candidate images</dt>
+                <dd>42,939</dd>
+              </div>
+              <div>
+                <dt>Clean GT pool</dt>
+                <dd>1,963</dd>
+              </div>
+              <div>
+                <dt>Retained PSNR range</dt>
+                <dd>10-20 dB</dd>
+              </div>
+            </dl>
+          </div>
+          <figure>
+            <img
+              src="assets/figures/data.webp"
+              alt="Overview of PRISM dataset examples and image quality distributions."
+              width="2134"
+              height="1200"
+            >
+          </figure>
+        </div>
+      </section>
+
+      <section id="method" class="section">
+        <div class="section-kicker">FaDeNet</div>
+        <div class="section-heading">
+          <h2>A conservative restoration baseline for textile detail</h2>
+          <p>
+            The method is designed around the risk identified by the motivation analysis: aggressive restoration can
+            erase real fabric texture. FaDeNet therefore separates base and detail components and gates corrections
+            spatially.
+          </p>
+        </div>
+
+        <div class="method-grid">
+          <article class="insight-card">
+            <h3>Base/detail decomposition</h3>
+            <p>
+              A content-adaptive split lets the model correct low-frequency color and illumination shifts while
+              keeping high-frequency textile structures explicit.
+            </p>
+          </article>
+          <article class="insight-card">
+            <h3>Mask-gated updates</h3>
+            <p>
+              Corrections are applied where the confidence mask predicts moir&eacute;-dominant regions, limiting
+              unnecessary edits on clean fabric areas.
+            </p>
+          </article>
+          <article class="insight-card">
+            <h3>Spectral-anisotropic blocks</h3>
+            <p>
+              SAGB combines directional spatial filters with coarse-scale FFT gating to model stripe-like and
+              narrow-band periodic interference.
+            </p>
+          </article>
+        </div>
+
+        <figure class="wide-figure">
+          <img
+            src="assets/figures/pipeline_crop.webp"
+            alt="FaDeNet architecture with base detail decomposition, U-shaped trunk, detail branch, and SAGB block."
+            width="3284"
+            height="1670"
+          >
+          <figcaption>
+            FaDeNet uses base/detail decomposition, mask-gated correction, and spectral-anisotropic gated blocks.
+          </figcaption>
+        </figure>
+      </section>
+
+      <section id="results" class="section band">
+        <div class="section-kicker">Results</div>
+        <div class="section-heading two-column">
+          <h2>Fabric-aware modeling improves both fidelity and user preference</h2>
+          <p>
+            On PRISM, FaDeNet outperforms representative screen-camera demoir&eacute;ing baselines across PSNR, SSIM,
+            and LPIPS. On real unpaired fabric captures, it also receives the highest MOS in the user study.
+          </p>
+        </div>
+
+        <div class="table-wrap" role="region" aria-label="PRISM quantitative comparison" tabindex="0">
+          <table>
+            <caption>Performance and efficiency on PRISM</caption>
+            <thead>
+              <tr>
+                <th scope="col">Method</th>
+                <th scope="col">PSNR ↑</th>
+                <th scope="col">SSIM ↑</th>
+                <th scope="col">LPIPS ↓</th>
+                <th scope="col">Params</th>
+                <th scope="col">FPS</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Input</td>
+                <td>16.998</td>
+                <td>0.7268</td>
+                <td>0.3495</td>
+                <td>-</td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>P-BiC</td>
+                <td>28.590</td>
+                <td>0.9689</td>
+                <td>0.0334</td>
+                <td>4.922M</td>
+                <td>38.17</td>
+              </tr>
+              <tr>
+                <td>ESDNet-L</td>
+                <td>28.809</td>
+                <td>0.9711</td>
+                <td>0.0268</td>
+                <td>10.623M</td>
+                <td>19.22</td>
+              </tr>
+              <tr class="highlight-row">
+                <td>FaDeNet</td>
+                <td>32.159</td>
+                <td>0.9859</td>
+                <td>0.0169</td>
+                <td>7.051M</td>
+                <td>38.10</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="result-grid">
+          <figure>
+            <img
+              src="assets/figures/vis_compact_crop.webp"
+              alt="Visual comparison of error maps on the PRISM dataset."
+              width="3346"
+              height="1302"
+            >
+            <figcaption>PRISM error-map comparison: brighter regions indicate larger restoration errors.</figcaption>
+          </figure>
+          <figure>
+            <img
+              src="assets/figures/realvis_crop.webp"
+              alt="Qualitative real-world fabric demoireing results from models trained on PRISM."
+              width="2280"
+              height="1250"
+            >
+            <figcaption>Zero-shot real-world fabric captures, with models trained only on PRISM.</figcaption>
+          </figure>
+        </div>
+
+        <div class="real-world-panel">
+          <h3>Real-world transfer</h3>
+          <p>
+            FaDeNet reports the best ARNIQA score of 0.63364 and the highest human MOS of 3.39. The paper also notes
+            statistically significant preference over the evaluated MOS baselines after Holm-Bonferroni correction.
+          </p>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-kicker">Open Challenge</div>
+        <div class="section-heading two-column">
+          <h2>Severe spectral entanglement remains difficult</h2>
+          <p>
+            The failure cases reinforce the paper's central motivation: when colored moir&eacute; overlaps authentic
+            garment patterns, restoration can still over-suppress valid textile details. Future work needs stronger
+            texture-aware priors and real-world adaptation.
+          </p>
+        </div>
+        <figure class="wide-figure compact">
+          <img
+            src="assets/figures/failure_case.webp"
+            alt="Failure cases where fabric texture and moire patterns are highly entangled."
+            width="2134"
+            height="1200"
+          >
+        </figure>
+      </section>
+
+      <section id="citation" class="section citation-section">
+        <div class="section-kicker">Citation</div>
+        <div class="section-heading">
+          <h2>Cite this work</h2>
+          <p>Proceedings metadata can be updated after the final camera-ready release.</p>
+        </div>
+        <pre><code>@inproceedings{wei2026fabric,
+  title     = {Fabric Image Demoir{\'e}ing Benchmark from Synthesis to Restoration},
+  author    = {Wei, Pengchao and Guo, Xiaojie},
+  booktitle = {European Conference on Computer Vision},
+  year      = {2026}
+}</code></pre>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <span>PRISM · Fabric Image Demoir&eacute;ing Benchmark</span>
+      <a href="mailto:pcwei.ai@gmail.com">Contact</a>
+    </footer>
+  </body>
+</html>

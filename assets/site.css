@@ -117,11 +117,11 @@ img {
 .hero-backdrop {
   position: absolute;
   inset: 0;
+  background-color: #12231d;
   background:
-    linear-gradient(90deg, rgba(12, 25, 20, 0.94), rgba(12, 25, 20, 0.7) 42%, rgba(12, 25, 20, 0.28)),
-    linear-gradient(180deg, rgba(12, 25, 20, 0.12), rgba(12, 25, 20, 0.72)),
-    url("figures/motivation.webp") center / cover no-repeat;
-  transform: scale(1.02);
+    linear-gradient(90deg, rgba(12, 25, 20, 0.96) 0%, rgba(12, 25, 20, 0.86) 34%, rgba(12, 25, 20, 0.45) 68%, rgba(12, 25, 20, 0.28) 100%),
+    linear-gradient(180deg, rgba(12, 25, 20, 0.14), rgba(12, 25, 20, 0.68)),
+    url("figures/motivation.webp") right center / auto 80% no-repeat;
 }
 
 .hero-inner {
@@ -563,6 +563,13 @@ pre {
 
   .hero {
     min-height: 500px;
+  }
+
+  .hero-backdrop {
+    background:
+      linear-gradient(90deg, rgba(12, 25, 20, 0.96), rgba(12, 25, 20, 0.74)),
+      linear-gradient(180deg, rgba(12, 25, 20, 0.18), rgba(12, 25, 20, 0.76)),
+      url("figures/motivation.webp") center top / contain no-repeat;
   }
 
   .hero-inner {
